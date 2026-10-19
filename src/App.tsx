@@ -1,10 +1,11 @@
-import ExplodedExperience from './sections/ExplodedExperience/ExplodedExperience'
-import './App.css'
+import Hero from './sections/Hero/Hero'
+import PhaseTwo from './sections/PhaseTwo/PhaseTwo'
 
 export default function App() {
   return (
     <main>
-      <ExplodedExperience />
+      <Hero />
+      <PhaseTwo />
     </main>
   )
 }

@@ -1,14 +1,14 @@
 :root {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: #302e2a;
-  background: #f3efe7;
+  color: #f8f7f4;
+  background: #171717;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
-  --background: #f3efe7;
-  --foreground: #302e2a;
-  --muted: #726c62;
-  --page-gutter: clamp(24px, 5.5vw, 88px);
+  --background: #171717;
+  --foreground: #f8f7f4;
+  --muted: #e0ded9;
+  --page-gutter: clamp(24px, 6.5vw, 104px);
 }
 * { box-sizing: border-box; margin: 0; }
 html { overflow-x: clip; }

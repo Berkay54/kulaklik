@@ -1,94 +1,152 @@
-# Media and Phase 1 validation
+# Current PhaseTwo visual composition validation
 
-Source: public/media/headphones-exploded-scroll.mp4
-Website media: public/media/headphones-exploded-scroll-scrub.mp4
+Hero TSX/CSS hashes still match the locked clean versions. App sibling structure,
+PhaseTwo 300svh section / 100svh CSS sticky stage, optimized media, 8-92% scrub
+mapping and RAF/currentTime seek implementation remain unchanged. The only
+addition to the existing progress update is driving a paused composition
+timeline; there is still one ScrollTrigger. No per-scroll React state.
 
-## Encoding
+PhaseTwo uses a warm neutral 62/38 product/editorial layout, contained media,
+four editorial states, a ruled specification list and staged SVG callouts.
+Internal callouts fade as the unchanged source reassembles; visible exterior
+labels remain. Source framing is retained, including its existing edge clipping.
+Anchors identify approximate visible regions, not precise tracked CAD parts.
+Mobile reduces annotations to three, with product above editorial.
 
-H.264 High, yuv420p, CRF 10, slow preset, every frame independently seekable,
-no B frames, fast-start moov atom. Original color metadata retained.
-AAC packets copied; video dimensions, timing and all 240 frames retained.
-No crop, scale, color filter, sharpening, frame interpolation or frame removal.
+1440x900, 390x844 and 375x667 layouts were visually inspected. Forward/reverse
+progress checks pass through all text states, callout build/reversal, first/final
+video times, and return-to-initial state. No console errors or horizontal
+overflow. Reduced motion removes text movement. Build/TypeScript and lint pass.
+Local five-second forward/backward sweep: 603 seeks, 3ms median, 12ms p95, zero
+observed main-thread long tasks. These are local measurements, not physical
+mobile or fixed-FPS guarantees. No commit, push or Phase 3.
 
-The movie duration header was restored to the source's 10.006 seconds after
-FFmpeg rounded it down by 1 ms. Both files report 10.005 seconds to Chromium;
-both video tracks are exactly 10 seconds long.
+The following earlier validation records are historical.
 
-| Measurement | Original | Scrub |
+---
+
+# Current PhaseTwo scrub validation
+
+Hero is locked and its TSX/CSS hashes match the clean pre-Phase-2 versions.
+App still renders Hero and PhaseTwo as direct siblings under main.
+PhaseTwo alone is 300svh with its own CSS sticky 100svh stage. Its own
+ScrollTrigger supplies progress, never pins, and never references Hero.
+The verified all-intra hero-headphones-scrub.mp4 is used with preload auto;
+the original source remains untouched. First hold: 0-8%, scrub: 8-92%,
+final hold: 92-100%. Text and video presentation are static.
+
+Desktop 1440x900 and mobile 390x844 tests verified normal Hero exit, adjacent
+non-overlapping sections, sticky stage top 0 only after PhaseTwo entry, paused
+video with changing time, exact first/final endpoints, natural reverse seeking,
+no horizontal overflow, and no console errors. No per-scroll React state.
+A five-second continuous forward/backward mobile-viewport scrub completed
+407 seeks, with 6ms median seek latency and 17ms p95. Measurements are local,
+not a fixed-FPS guarantee or a physical-device test. Build (including tsc -b)
+and lint pass. No commit or push.
+
+The following historical media-pipeline evidence remains useful for encoding
+and source verification. Its former takeover/runtime description is superseded
+by the independent sibling structure above.
+
+---
+
+ Hero takeover and scrub media validation
+
+## Media pipeline
+
+Original retained unchanged: public/media/hero-headphones.mp4.
+SHA-256: 7b22b0802e02641cff0291d6a3a033ceab97762d4025a8ae8f023b20e39bd005.
+
+Optimized output: public/media/hero-headphones-scrub.mp4.
+H.264 High, yuv420p, BT.709 limited range, CRF 12, fast preset, GOP 1,
+no B-frames, no audio, faststart. No crop, resize, retiming, interpolation,
+or frame removal. Every original presentation timestamp and sample duration
+matches. This is a high-quality lossy encode, not pixel-lossless.
+
+| Measurement | Source | Optimized |
 | --- | --- | --- |
-| Resolution | 1280 x 720 | 1280 x 720 |
-| Video FPS | 24 | 24 |
-| Video frames | 240 | 240 |
-| Video timeline | 10.000 s | 10.000 s |
-| Movie header duration | 10.006 s | 10.006 s |
-| Chromium duration | 10.005 s | 10.005 s |
-| Video timescale | 12288 | 12288 |
-| Sample duration | 512 ticks | 512 ticks |
-| First video timestamp | 0 | 0 |
-| Last video timestamp | 9.958333 s | 9.958333 s |
-| Keyframes | 1 | 240 |
-| File size | 4,245,904 bytes | 27,064,681 bytes |
+| Resolution | 2560 x 1440 | 2560 x 1440 |
+| FPS | 30 | 30 |
+| Decoded video frames | 541 | 541 |
+| Video duration | 18.033333 s | 18.033333 s |
+| First presentation timestamp | 0 s | 0 s |
+| Last presentation timestamp | 18 s | 18 s |
+| Keyframes | 4 | 541 |
+| GOP | 150 frames / 5 seconds | 1 frame |
+| Video bitrate | 14.657 Mbps | 51.294 Mbps |
+| File bytes | 33,511,717 | 115,628,503 |
 
-Source SHA-256 before and after encoding:
-5f4ca2b63dbae9eedec0d6be81c322adae58102dc31abf0130a91d75d2827b93
+The source container is 18.041995 s because of its audio tail. With irrelevant
+audio removed, the output container is 18.033333 s; the complete video timeline,
+including the first and final frames, is identical.
 
-Run the read-only metadata/hash checks:
-node scripts/inspect-media.mjs
+FFprobe counted all 541 decoded frames in each file. All optimized packets are
+sync samples. The optimized moov atom precedes mdat. Complete packet PTS and
+duration arrays match. SSIM across all frames: 0.996154; first frame 0.999334;
+final frame 0.997408.
 
-SSIM measured over all 240 decoded frames: 0.995477.
-First frame: 0.999425. Last frame: 0.994427.
-The identical source frame positions/content are retained, including the
-first and last frames. This web-compatible H.264 re-encode is high quality,
-but is not pixel-lossless. Original cropping within the source is retained.
+Reproduce:
+- scripts/encode-hero-scrub.ps1 accepts a portable FFmpeg executable path.
+- node scripts/verify-hero-scrub.mjs accepts a portable FFprobe path.
+- Default tool paths are in ignored .tools; no build/runtime dependency added.
 
-## Browser performance
+## Browser measurements
 
-Measured in local Chromium, using actual seeked events while paused:
+Local Chromium, fully loaded media, sequential paused currentTime seeks.
 
-- Original, fully buffered, frequent seeks around 8 seconds:
-  530-597 ms; the initial full-range test reached 643 ms.
-- Scrub, after initial decode: 28-87 ms.
-- Same 8-second sequence, scrub:
-  65, 40, 87, 62, 39, 58, 45, 41 ms.
-- The first seek on a newly loaded scrub element took 372 ms.
-  The website loads the first frame before scrolling.
-- Actual continuous forward/backward scroll test, 3.5 seconds per direction:
-  137 presented frames, 50 ms median display interval, 67 ms 95th percentile.
-  About 20 displayed updates per second on this test machine, not 60 fps.
-- These are local measurements, not a guarantee for remote networks or devices.
+| Target time | Source seek ms | All-intra seek ms |
+| --- | --- | --- |
+| 1 | 54 | 4 |
+| 5 | 20 | 5 |
+| 10 | 39 | 5 |
+| 16 | 68 | 8 |
+| 17.9 | 125 | 9 |
+| 14 (reverse) | 154 | 9 |
+| 9 (reverse) | 125 | 11 |
+| 4 (reverse) | 103 | 18 |
+| 0 (reverse) | 10 | 21 |
 
-## Website checks - current light redesign
+Foreground continuous six-second forward/backward scroll test after optimization:
+645 completed seeks, 4 ms median seek, 16 ms p95, 8 ms median seek-completion
+interval, zero observed main-thread tasks above 50 ms. These are local decoder
+measurements, not a claim of a fixed playback frame rate or remote/mobile speed.
+The source animation itself is 30 fps.
 
-- One 380svh section, one 100svh sticky stage, one video element.
-- Desktop grid: 38% editorial text, 62% video. Mobile: text above video.
-- Warm #F3EFE7 backdrop, charcoal type, transparent minimal navigation.
-- Four requested copy stages; progress-driven fades and 8px vertical motion.
-- Reduced motion removes vertical motion.
-- Video mapping: hold 0-15%, scrub 15-80%, hold 80-100%.
-- Video remains paused, muted, playsInline, metadata preload, controls absent.
-- No autoplay, play() calls, zoom, camera changes, or CSS crop.
-- object-fit: contain; source aspect ratio retained.
-- Raw video rectangle: native aspect ratio, width 100%, height auto, object-fit contain. No masks, feathering, filters, transforms, borders, rounded corners, shadows or video overlays. Source framing remains unchanged.
-- Forward and reverse checks across all four stages passed at 1440x900 and 390x844.
-- First and final holds confirmed at currentTime 0 and 10.005.
-- No horizontal overflow at desktop and mobile viewport sizes.
-- Physical mobile devices have not been tested.
-- Production build (including TypeScript), lint and media integrity checks pass.
-- Original and scrub video hashes unchanged during this redesign.
-- No new sections, commit or push.
+Automated small high-frequency wheel deltas, larger wheel notches, rapid
+direction changes, repeated scrubs, exact first/final frame holds, and stopping
+at a target passed. Physical trackpad hardware and physical mobile devices
+were not tested. The MP4 results do not justify a frame-sequence fallback
+for this local environment, so none was implemented.
 
+The all-intra file is 115.6 MB: preload=auto starts buffering on initial mount,
+with one media instance and no autoplay. The larger transfer is the tradeoff
+for high-quality all-intra random seeking.
 
+## Scene composition and scroll implementation
 
-## Latest desktop layout correction
+One 440svh scroll range contains one sticky 100svh viewport. Hero and engineering
+are absolute layers inside it. There is no inter-section spacer, grey media
+letterbox band, panel slide, or exposed page background.
 
-- 36% editorial panel, 64% full-height media, shared 100svh sticky stage.
-- Desktop video: 100% width and height, cover, object-position 56% center.
-- Media reaches top, right content edge and bottom; only the vertical split remains.
-- No media margin, padding, frame, effects, transform or scroll scaling.
-- Assembled and exploded views visually inspected at 1440x900.
-- Cover crops outer exploded components because the source aspect ratio differs
-  from the tall panel. A contain/oversized positioning fallback cannot preserve
-  all source pixels and eliminate all margins at this geometry.
-- Original video and optimized video are unchanged; scrub/copy code unchanged.
-- Forward/backward seek and copy checks passed; no horizontal overflow.
-- Build (TypeScript + Vite) and lint pass.
+- Opening Hero holds through 12% of the overall scroll range.
+- Feathered right-side mask takes over from 12% through 32%.
+- Hero UI fades out first, with only 24px movement.
+- Engineering copy enters only during the last 16% of the handoff.
+- After 32%, the engineering sequence owns the viewport; its local progress
+  retains the 0-12% first-frame hold, 12-88% scrub, 88-100% final-frame hold.
+- Hero remains underneath during takeover and returns naturally on reverse.
+- Both scenes use edge-to-edge imagery; cover eliminates the previous grey
+  letterboxing. Tall mobile viewports crop more of the wide source.
+- Reduced motion uses a crossfade and no text displacement.
+- Hidden scenes are inert. Large text blocks do not compete during handoff.
+- Hero files and product copy/typography are unchanged.
+
+ScrollTrigger calculates target time; refs retain target, requested time,
+video element, and RAF id. One outstanding seek is allowed. Targets are clamped,
+quantized to verified 30fps frame timestamps, with exact 0/duration endpoints.
+Sub-frame and redundant assignments are suppressed. No catch-up easing,
+fastSeek keyframe approximation, per-scroll React state, raw scroll handler,
+or perpetual animation-frame loop is used.
+
+Build, lint, media verification, desktop/mobile overflow, sticky bounds,
+console, reduced-motion, and reverse takeover checks pass. No commit or push.
