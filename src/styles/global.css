@@ -1,0 +1,17 @@
+:root {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #302e2a;
+  background: #f3efe7;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  --background: #f3efe7;
+  --foreground: #302e2a;
+  --muted: #726c62;
+  --page-gutter: clamp(24px, 5.5vw, 88px);
+}
+* { box-sizing: border-box; margin: 0; }
+html { overflow-x: clip; }
+body { min-width: 320px; }
+a:focus-visible { outline: 1px solid var(--foreground); outline-offset: 8px; }
+::selection { background: #d5c8b4; color: var(--foreground); }

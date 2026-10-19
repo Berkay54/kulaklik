@@ -1,0 +1,86 @@
+{
+    "version":  1,
+    "project":  {
+                    "name":  "kulaklik",
+                    "productType":  "Premium headphone landing experience",
+                    "stack":  [
+                                  "react",
+                                  "vite"
+                              ]
+                },
+    "sources":  {
+                    "tokens":  [
+                                   "src/styles/global.css"
+                               ],
+                    "components":  [
+
+                                   ],
+                    "assets":  [
+
+                               ],
+                    "instructions":  [
+
+                                     ]
+                },
+    "design":  {
+                   "colorMode":  "light",
+                   "colors":  {
+
+                              },
+                   "typography":  {
+
+                                  },
+                   "spacing":  {
+
+                               },
+                   "radius":  {
+
+                              },
+                   "shadows":  {
+
+                               },
+                   "motion":  {
+
+                              },
+                   "density":  "unknown"
+               },
+    "components":  {
+                       "installed":  [
+
+                                     ],
+                       "preferredPrimitives":  [
+
+                                               ],
+                       "patterns":  [
+
+                                    ]
+                   },
+    "constraints":  {
+                        "must":  [
+
+                                 ],
+                        "avoid":  [
+
+                                  ]
+                    },
+    "decisions":  [
+                      "Current layout: 36% warm editorial panel, 64% full-height video. Desktop video width and height 100%, object-fit cover, object-position 56% center. No effects or scroll scaling.",
+                      "The 16:9 source cannot fill the tall right panel without horizontal cropping. Cover centers earcups and electronics; outer exploded components are cropped at 1440x900. Contain/absolute positioning cannot simultaneously eliminate margins and preserve the complete source frame.",
+                      "Mobile remains the existing stacked contain layout. Video file and scroll/copy implementation unchanged."
+                  ],
+    "evidence":  [
+                     {
+                         "fact":  "design.tokens",
+                         "source":  "src/app.css"
+                     },
+                     {
+                         "fact":  "project.stack:react",
+                         "source":  "package.json"
+                     },
+                     {
+                         "fact":  "project.stack:vite",
+                         "source":  "package.json"
+                     }
+                 ],
+    "generatedAt":  "2026-10-19T14:00:31.604Z"
+}

@@ -1,0 +1,51 @@
+.editorial-column {
+  position: relative;
+  min-width: 0;
+  padding-left: var(--page-gutter);
+  padding-right: 24px;
+  z-index: 1;
+}
+.chapter-copy { display: grid; }
+.experience-caption {
+  grid-area: 1 / 1;
+  opacity: 0;
+  visibility: hidden;
+}
+.experience-caption:first-child { opacity: 1; visibility: visible; }
+.eyebrow {
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .17em;
+  margin-bottom: 24px;
+}
+.experience-caption h1,
+.experience-caption h2 {
+  font-size: clamp(21px, 2.05vw, 33px);
+  line-height: 1.3;
+  font-weight: 400;
+  letter-spacing: -.025em;
+}
+.chapter-body {
+  max-width: 285px;
+  margin-top: 25px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.85;
+}
+.scroll-cue {
+  position: absolute;
+  top: calc(100% + 56px);
+  color: var(--muted);
+  font-size: 9px;
+  letter-spacing: .12em;
+}
+.scroll-cue span { display: inline-block; margin-left: 20px; font-size: 13px; }
+@media (max-width: 700px) {
+  .editorial-column { padding: 0 var(--page-gutter); align-self: end; }
+  .experience-caption h1,
+  .experience-caption h2 { font-size: clamp(23px, 5.8vw, 30px); }
+  .eyebrow { margin-bottom: 17px; font-size: 9px; }
+  .chapter-body { margin-top: 17px; max-width: 310px; font-size: 12px; line-height: 1.75; }
+  .scroll-cue { display: none; }
+}
